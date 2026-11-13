@@ -119,7 +119,7 @@ function renderAtomicList(target, masses) {
     a.textContent = symbol; b.textContent = mass; row.append(a,b); target.appendChild(row);
   });
 }
-function theoreticalPerQuestion(level) { return 230 * (level * level + level); }
+function theoreticalPerQuestion(level) { return 720 * (level * level + level); }
 function theoreticalTotal(level) { return theoreticalPerQuestion(level) * gameQuestionCount(level); }
 function gameQuestionCount(level) { return level === 1 ? 5 : (GAME_DATA[level].questions || []).length; }
 function rankFor(score,theoretical) {
@@ -227,7 +227,7 @@ function submitAnswer() {
   game.answered = true;
   const seconds=elapsedQuestionSeconds(); game.totalTime+=seconds;
   const x=game.level, y=game.questionMiss + game.carryMiss, z=seconds + game.carryTime;
-  const raw=230*(x*x+x)-100*x*y-5*x*z;
+  const raw=720*(x*x+x)-200*x*y-30*x*z;
   const points=Math.max(10*x,Math.round(raw)); game.score+=points; game.correct++;
   game.carryMiss=0; game.carryTime=0;
   $('feedback').textContent=`正解！ +${points}点`; $('feedback').className='feedback success'; $('current-score').textContent=game.score;
