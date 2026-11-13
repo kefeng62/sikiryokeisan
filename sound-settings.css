@@ -1,0 +1,40 @@
+/* Top-page sound controls and a compact, accessible volume settings dialog. */
+.home-actions {
+  position: absolute;
+  left: 26px;
+  bottom: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.home-atomic,
+.home-sound-settings {
+  position: static;
+  min-width: 190px;
+  min-height: 68px;
+}
+.home-sound-settings {
+  border-color: #7c6bb1;
+  background: linear-gradient(135deg, #fff, #f0ecff);
+}
+.home-sound-settings:hover { background: #e9e2ff; }
+.sound-settings-card { width: min(440px, 100%); }
+.volume-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-weight: 700;
+  margin: 24px 0 12px;
+}
+#sound-volume { width: 100%; accent-color: #7060ad; cursor: pointer; }
+.volume-help { color: #555; line-height: 1.6; font-size: .95rem; }
+.sound-settings-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.sound-settings-actions .secondary { padding: 12px 18px; font-size: 1rem; }
+@media (max-width: 700px) {
+  .home-actions { position: static; flex-direction: column; align-items: stretch; margin-top: 20px; }
+  .home-atomic, .home-sound-settings { width: 100%; min-height: 58px; margin: 0; }
+}
+@media (max-width: 380px) {
+  .sound-settings-actions { flex-direction: column; }
+  .sound-settings-actions .secondary { width: 100%; }
+}

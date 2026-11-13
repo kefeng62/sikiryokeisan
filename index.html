@@ -7,6 +7,7 @@
   <title>式量計算</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="effects.css">
+  <link rel="stylesheet" href="sound-settings.css">
 </head>
 <body>
   <main class="app-shell">
@@ -14,7 +15,10 @@
       <h1>式量計算</h1>
       <div id="home-player-progress" class="home-player-progress" aria-live="polite"></div>
       <div id="level-cards" class="level-grid"></div>
-      <button id="atomic-list-button" class="secondary home-atomic">原子量一覧</button>
+      <div class="home-actions">
+        <button id="atomic-list-button" class="secondary home-atomic">原子量一覧</button>
+        <button id="sound-settings-button" class="secondary home-sound-settings" aria-haspopup="dialog" aria-controls="sound-settings-modal">🔊 音量設定</button>
+      </div>
     </section>
 
     <section id="game-screen" class="screen game-screen hidden" aria-live="polite">
@@ -76,6 +80,20 @@
       <div class="player-rankup hidden" id="player-rankup" aria-live="polite"></div>
       <div class="rank-border" id="rank-border">S：70%以上　A：55%以上　B：45%以上　C：30%以上　D：15%以上　E：それ以下</div>
       <button id="back-home-button" class="secondary result-back">もどる</button>
+    </section>
+
+    <section id="sound-settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="sound-settings-title">
+      <div class="modal-card sound-settings-card">
+        <button id="close-sound-settings" class="modal-close" aria-label="閉じる">×</button>
+        <h2 id="sound-settings-title">音量設定</h2>
+        <label class="volume-label" for="sound-volume">効果音の音量 <output id="sound-volume-value" for="sound-volume">70%</output></label>
+        <input id="sound-volume" type="range" min="0" max="100" value="70" aria-describedby="sound-volume-help">
+        <p id="sound-volume-help" class="volume-help">ボタンのタップ音と、正解・不正解の効果音に適用されます。</p>
+        <div class="sound-settings-actions">
+          <button id="sound-test-button" class="secondary" data-no-tap>音を試す</button>
+          <button id="sound-settings-done" class="secondary" data-no-tap>完了</button>
+        </div>
+      </div>
     </section>
 
     <section id="atomic-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
