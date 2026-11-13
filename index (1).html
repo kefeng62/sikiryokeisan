@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eeeeee">
+  <title>式量計算</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section id="home-screen" class="screen home-screen">
+      <h1>式量計算</h1>
+      <div id="level-cards" class="level-grid"></div>
+      <button id="atomic-list-button" class="secondary home-atomic">原子量一覧</button>
+    </section>
+
+    <section id="game-screen" class="screen game-screen hidden" aria-live="polite">
+      <header class="game-header">
+        <div>
+          <div class="level-heading" id="game-level">Level 1</div>
+          <div class="question-number" id="question-number">問 1</div>
+        </div>
+        <div class="score-and-time">
+          <div>SCORE：<span id="current-score">0</span></div>
+          <time id="question-timer">0:00.00</time>
+        </div>
+      </header>
+
+      <div class="question-area">
+        <div class="compound" id="compound">H<sub>2</sub>O</div>
+        <div class="compound-name" id="compound-name">水</div>
+        <div class="answer-display" id="answer-display" aria-label="入力した式量">　</div>
+        <p class="feedback" id="feedback" role="status"></p>
+      </div>
+
+      <div class="game-bottom">
+        <button id="quit-button" class="secondary quit-button">やめる</button>
+        <div class="keypad" aria-label="数字入力">
+          <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button><button data-key="back">×</button>
+          <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button><button data-key="clear">C</button>
+          <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+          <button class="zero" data-key="0">0</button><button class="decimal" data-key="dot">.</button>
+          <button class="go-button" id="submit-answer" disabled>GO</button>
+        </div>
+        <div class="pass-wrap">
+          <button id="pass-button" class="secondary pass-button hidden">パス</button>
+          <div id="pass-remaining" class="pass-remaining">後3回</div>
+        </div>
+        <aside class="atomic-panel">
+          <h2>原子量</h2>
+          <div id="atomic-list" class="atomic-list"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="result-screen" class="screen result-screen hidden">
+      <header class="result-header"><span id="result-level">Level 1</span><span>RESULT</span></header>
+      <div class="result-content">
+        <div class="result-stats">
+          <div><span>SCORE</span><strong id="result-score">0</strong></div>
+          <div><span>TIME</span><strong id="result-time">0:00.00</strong></div>
+          <div><span>MISS</span><strong id="result-miss">0</strong></div>
+          <div><span>正解数</span><strong id="result-correct">0 / 0</strong></div>
+          <div><span>パス回数</span><strong id="result-pass">0</strong></div>
+        </div>
+        <div class="rank" id="result-rank">S</div>
+      </div>
+      <p class="rank-detail" id="rank-detail"></p>
+      <div class="player-progress" id="player-xp">PLAYER RANK 1　XP：0 / 1000</div>
+      <div class="player-rankup hidden" id="player-rankup" aria-live="polite"></div>
+      <div class="rank-border" id="rank-border">S：70%以上　A：55%以上　B：45%以上　C：30%以上　D：15%以上　E：それ以下</div>
+      <button id="back-home-button" class="secondary result-back">もどる</button>
+    </section>
+
+    <section id="atomic-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-card">
+        <button id="close-modal" class="modal-close" aria-label="閉じる">×</button>
+        <h2 id="modal-title">原子量一覧</h2>
+        <div id="all-atomic-list" class="all-atomic-list"></div>
+      </div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
