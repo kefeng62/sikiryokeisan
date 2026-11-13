@@ -14,7 +14,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .home-screen h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 500; margin: 0 0 58px; }
 .level-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; max-width: 1000px; margin: 0 0 80px 18px; }
 .level-card { min-height: 104px; border: 1px solid #777; padding: 12px; text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform .12s, filter .12s; }
-.level-card:hover { transform: translateY(-3px); filter: brightness(1.03); }
+.level-card:hover:not(:disabled) { transform: translateY(-3px); filter: brightness(1.03); }
+.level-card:disabled { cursor: not-allowed; opacity: .58; filter: grayscale(.25); }
 .level-card strong { font-size: clamp(1.1rem, 2.5vw, 1.7rem); font-weight: 500; }
 .level-card small { font-size: .75rem; }
 .level-card .best { font-size: 1.25rem; font-weight: bold; align-self: flex-end; }
@@ -87,3 +88,103 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .rank { font-size: 5rem; }
 }
 @media (max-width: 380px) { .game-bottom { grid-template-columns: 1fr; } .atomic-panel { grid-column: 1; grid-row: 3; } .quit-button { grid-row: 2; } .keypad { max-width: 230px; width: 100%; justify-self: center; } }
+
+/* 小数点入力・パスボタン */
+.keypad .decimal { grid-column: 4; grid-row: 4; }
+.keypad .zero { grid-column: 1 / 4; grid-row: 4; }
+.keypad .go-button { grid-column: 4; grid-row: 3; }
+.keypad button:disabled { opacity: .38; cursor: not-allowed; }
+.pass-button { grid-column: 1; justify-self: start; min-width: 160px; margin-top: 10px; background: #ffe2a8; border-color: #b77b18; }
+/* 約0.3秒の正解・不正解エフェクト */
+.game-screen.effect-correct { animation: correct-flash .3s ease-out; }
+.game-screen.effect-wrong { animation: wrong-shake .3s ease-out; }
+@keyframes correct-flash {
+  0% { box-shadow: inset 0 0 0 0 rgba(40,190,105,0); filter: brightness(1); }
+  35% { box-shadow: inset 0 0 0 9px rgba(40,190,105,.85); filter: brightness(1.13); }
+  100% { box-shadow: inset 0 0 0 0 rgba(40,190,105,0); filter: brightness(1); }
+}
+@keyframes wrong-shake {
+  0%,100% { transform: translateX(0); background-color: transparent; }
+  20%,60% { transform: translateX(-7px); background-color: rgba(220,40,40,.12); }
+  40%,80% { transform: translateX(7px); background-color: rgba(220,40,40,.12); }
+}
+@media (max-width:700px) {
+  .pass-button { grid-column: 1; grid-row: 3; min-width: 0; width: 100%; }
+}
+
+/* 不正解：赤い稲妻が走り、画面が揺れる。正解：淡い緑のフラッシュ */
+.game-screen { position: relative; overflow: hidden; }
+.game-screen.effect-correct { animation: correct-green-flash .32s ease-out; }
+.game-screen.effect-wrong { animation: wrong-electric-shake .32s ease-out; }
+.game-screen.effect-wrong::before,
+.game-screen.effect-wrong::after {
+  content: ""; position: absolute; z-index: 8; pointer-events: none;
+  top: -12%; height: 125%; width: 34%; opacity: 0;
+  background: linear-gradient( transparent 0 8%, #ff3434 8% 10%, transparent 10% 24%, #ff7777 24% 26%, transparent 26% 42%, #e00020 42% 45%, transparent 45% 66%, #ff4a4a 66% 68%, transparent 68%);
+  filter: drop-shadow(0 0 5px #ff1717) drop-shadow(0 0 13px #ff3030);
+  clip-path: polygon(45% 0,65% 0,48% 25%,75% 25%,30% 62%,47% 62%,18% 100%,28% 57%,8% 57%);
+}
+.game-screen.effect-wrong::before { left: 4%; animation: electric-left .32s ease-out; }
+.game-screen.effect-wrong::after { right: 4%; transform: scaleX(-1); animation: electric-right .32s ease-out; }
+@keyframes correct-green-flash {
+  0%,100% { box-shadow: inset 0 0 0 0 rgba(40,190,105,0); background-color: transparent; }
+  35% { box-shadow: inset 0 0 0 8px rgba(65,205,125,.65); background-color: rgba(110,230,150,.13); }
+}
+@keyframes wrong-electric-shake {
+  0%,100% { transform: translate(0,0); }
+  15%,55%,85% { transform: translate(-6px,1px); }
+  30%,70% { transform: translate(6px,-1px); }
+}
+@keyframes electric-left {
+  0% { opacity: 0; transform: translateX(-18px) scaleY(.7); }
+  18%,70% { opacity: .95; }
+  100% { opacity: 0; transform: translateX(18px) scaleY(1.05); }
+}
+@keyframes electric-right {
+  0% { opacity: 0; transform: scaleX(-1) translateX(-18px) scaleY(.7); }
+  18%,70% { opacity: .95; }
+  100% { opacity: 0; transform: scaleX(-1) translateX(18px) scaleY(1.05); }
+}
+
+/* Ver.6: パス表示でキーパッド・原子量欄が動かない固定レイアウト */
+.game-bottom { grid-template-areas: "quit keypad atomic" "pass keypad atomic"; grid-template-columns: minmax(130px,1fr) minmax(170px,220px) minmax(150px,220px); }
+.quit-button { grid-area: quit; }
+.keypad { grid-area: keypad; }
+.atomic-panel { grid-area: atomic; }
+.pass-button { grid-area: pass; align-self: start; justify-self: start; margin-top: 0; min-height: 58px; }
+.pass-button.hidden { visibility: hidden !important; display: block !important; }
+.rank-border { position: absolute; right: 22px; bottom: 24px; font-size: .9rem; color: #555; text-align: right; line-height: 1.7; max-width: 65%; }
+@media (max-width:700px) {
+  .game-bottom { grid-template-areas: "keypad atomic" "quit atomic" "pass atomic"; grid-template-columns: minmax(0,1fr) minmax(130px,1fr); }
+  .quit-button { grid-area: quit; }
+  .keypad { grid-area: keypad; }
+  .atomic-panel { grid-area: atomic; grid-row: 1 / 4; }
+  .pass-button { grid-area: pass; width: 100%; }
+  .rank-border { position: static; margin: 30px 0 70px; max-width: none; text-align: center; }
+}
+@media (max-width:380px) {
+  .game-bottom { grid-template-areas: "keypad" "quit" "pass" "atomic"; grid-template-columns: 1fr; }
+  .atomic-panel { grid-area: atomic; grid-row: auto; }
+  .keypad { grid-area: keypad; }
+  .quit-button { grid-area: quit; }
+  .pass-button { grid-area: pass; }
+}
+
+.pass-wrap { grid-area: pass; display:flex; flex-direction:column; align-items:flex-start; gap:5px; min-height:82px; }
+.pass-wrap .pass-button { grid-area:auto; }
+.pass-remaining { font-size:.9rem; color:#75531c; font-weight:700; padding-left:8px; }
+.pass-button.hidden { visibility:hidden !important; display:block !important; }
+.player-xp { text-align:center; margin:12px auto; font-weight:700; color:#53627a; }
+.player-rankup { margin:18px auto; padding:14px 22px; width:max-content; max-width:90%; border-radius:14px; background:linear-gradient(110deg,#fff0b8,#ffe0a0); color:#81520a; font-weight:900; text-align:center; }
+.rankup-animation { animation: rank-pop .65s ease-out; }
+@keyframes rank-pop { 0% { transform:scale(.65); opacity:0; } 55% { transform:scale(1.12); opacity:1; } 100% { transform:scale(1); opacity:1; } }
+
+.pass-wrap { grid-area:pass; }
+.pass-wrap .pass-button { margin:0; }
+@media (max-width:700px) { .pass-wrap { grid-area:pass; width:100%; } .pass-wrap .pass-button { width:100%; } }
+
+/* Ver.9: リザルトのプレイヤーXP表示 */
+.player-progress { margin: 12px auto; text-align: center; font-weight: 700; color: #45536a; }
+.player-rankup { margin: 10px auto; text-align: center; font-weight: 800; color: #b7791f; }
+.rankup-animation { animation: rankUpPop .55s ease-out both; }
+@keyframes rankUpPop { 0% { opacity: 0; transform: scale(.75); } 65% { opacity: 1; transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }

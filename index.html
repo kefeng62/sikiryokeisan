@@ -40,8 +40,12 @@
           <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button><button data-key="back">×</button>
           <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button><button data-key="clear">C</button>
           <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
-          <button class="zero" data-key="0">0</button>
-          <button class="go-button" id="submit-answer">GO</button>
+          <button class="zero" data-key="0">0</button><button class="decimal" data-key="dot">.</button>
+          <button class="go-button" id="submit-answer" disabled>GO</button>
+        </div>
+        <div class="pass-wrap">
+          <button id="pass-button" class="secondary pass-button hidden">パス</button>
+          <div id="pass-remaining" class="pass-remaining">後3回</div>
         </div>
         <aside class="atomic-panel">
           <h2>原子量</h2>
@@ -58,10 +62,14 @@
           <div><span>TIME</span><strong id="result-time">0:00.00</strong></div>
           <div><span>MISS</span><strong id="result-miss">0</strong></div>
           <div><span>正解数</span><strong id="result-correct">0 / 0</strong></div>
+          <div><span>パス回数</span><strong id="result-pass">0</strong></div>
         </div>
         <div class="rank" id="result-rank">S</div>
       </div>
       <p class="rank-detail" id="rank-detail"></p>
+      <div class="player-progress" id="player-xp">PLAYER RANK 1　XP：0 / 1000</div>
+      <div class="player-rankup hidden" id="player-rankup" aria-live="polite"></div>
+      <div class="rank-border" id="rank-border">S：70%以上　A：55%以上　B：45%以上　C：30%以上　D：15%以上　E：それ以下</div>
       <button id="back-home-button" class="secondary result-back">もどる</button>
     </section>
 
