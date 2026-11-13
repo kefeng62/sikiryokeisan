@@ -167,7 +167,7 @@ const LEVEL2_POOLS = {
     ...makeSaltPool(LEVEL2_CATIONS_C, LEVEL2_ANIONS_C),
     ['HClO4','過塩素酸'], ['NaClO4','過塩素酸ナトリウム'], ['KClO4','過塩素酸カリウム'],
     ['Na3AlF6','氷晶石'], ['K4Fe(CN)6','フェロシアン化カリウム'],
-    ['K3Fe(CN)6','フェリシアン化カリウム'], ['NiOOH','オキシ水酸化ニッケル'],
+    ['K3Fe(CN)6','フェリシアン化リウム'], ['NiOOH','オキシ水酸化ニッケル'],
     ['C6H10O4','アジピン酸'], ['C6H8Cl2O2','アジピン酸ジクロリド'],
     ['C6H16N2','ヘキサメチレンジアミン'], ['KMnO4','過マンガン酸カリウム'],
     ['K2Cr2O7','二クロム酸カリウム'], ['C10H8','ナフタレン'],
@@ -233,6 +233,7 @@ function parseFormula(formula) {
     return sum + LEVEL2_ATOMIC_MASSES[el] * n;
   }, 0);
 
+  // 計算結果がちょうど .5 の場合だけ小数を残し、それ以外は整数に四捨五入
   const halfInteger = Math.floor(mass) + 0.5;
   return Math.abs(mass - halfInteger) < 1e-8 ? halfInteger : Math.round(mass);
 }
@@ -330,16 +331,25 @@ function rankFor(score,theoretical) {
 function renderLevelCards() {
   $('level-cards').innerHTML = '';
 
-  for (let level=1; level<=4; level++) {
+  for (let level = 1; level <= 4; level++) {
     const best = Number(localStorage.getItem(`formula-game-best-${level}`) || 0);
+    const fastest = Number(localStorage.getItem(`formula-game-fastest-${level}`) || 0);
     const card = document.createElement('button');
 
     card.className = `level-card level-${level}`;
-
     const available = level === 1 || level === 2;
     card.disabled = !available;
 
-    card.innerHTML = `<strong>Level　${level}</strong><small>${available ? `High Score：${best}` : '準備中'}</small><span class=\"best\">${available ? (best ? rankFor(best, theoreticalPerQuestion(level) * gameQuestionCount(level)) : '') : ''}</span>`;
+    const fastestText = available && fastest > 0
+      ? `最速タイム：${formatTime(fastest)}`
+      : '最速タイム：--:--.--';
+
+    card.innerHTML = `
+      <strong>Level　${level}</strong>
+      <small>${available ? `High Score：${best}` : '準備中'}</small>
+      <small class="fastest-time">${fastestText}</small>
+      <span class="best">${available ? (best ? rankFor(best, theoreticalPerQuestion(level) * gameQuestionCount(level)) : '') : ''}</span>
+    `;
 
     if (available) {
       card.addEventListener('click', () => startGame(level));
@@ -464,6 +474,7 @@ function playAnswerEffect(kind) {
 
   screen.classList.remove('effect-correct','effect-wrong');
 
+  // Reflow restarts the short animation for consecutive answers.
   void screen.offsetWidth;
 
   screen.classList.add(kind === 'correct' ? 'effect-correct' : 'effect-wrong');
@@ -651,26 +662,31 @@ function finishGame() {
   clearInterval(timerInterval);
   clearTimeout(questionTimeout);
 
-  const level=game.level;
-  const theoretical=theoreticalPerQuestion(level)*game.questions.length;
-  const rank=rankFor(game.score,theoretical);
-  const key=`formula-game-best-${level}`;
+  const level = game.level;
+  const theoretical = theoreticalPerQuestion(level) * game.questions.length;
+  const rank = rankFor(game.score, theoretical);
+  const bestKey = `formula-game-best-${level}`;
+  const fastestKey = `formula-game-fastest-${level}`;
 
-  const old=Number(localStorage.getItem(key)||0);
-
-  if(game.score>old) {
-    localStorage.setItem(key,String(game.score));
+  const oldBest = Number(localStorage.getItem(bestKey) || 0);
+  if (game.score > oldBest) {
+    localStorage.setItem(bestKey, String(game.score));
   }
 
-  $('result-level').textContent=`Level ${level}`;
-  $('result-score').textContent=game.score;
-  $('result-time').textContent=formatTime(game.totalTime);
-  $('result-miss').textContent=game.totalMiss;
-  $('result-correct').textContent=`${game.correct} / ${game.questions.length}`;
-  $('result-pass').textContent=game.passCount;
-  $('result-rank').textContent=rank;
+  const oldFastest = Number(localStorage.getItem(fastestKey) || 0);
+  if (!oldFastest || game.totalTime < oldFastest) {
+    localStorage.setItem(fastestKey, String(game.totalTime));
+  }
 
-  $('rank-detail').textContent='';
+  $('result-level').textContent = `Level ${level}`;
+  $('result-score').textContent = game.score;
+  $('result-time').textContent = formatTime(game.totalTime);
+  $('result-miss').textContent = game.totalMiss;
+  $('result-correct').textContent = `${game.correct} / ${game.questions.length}`;
+  $('result-pass').textContent = game.passCount;
+  $('result-rank').textContent = rank;
+
+  $('rank-detail').textContent = '';
 
   const progress = getPlayerProgress();
   const gained = Math.round(game.score * 1.2);
@@ -714,7 +730,7 @@ function finishGame() {
     cutoffs.map(([label,rate]) => `${label}：${Math.ceil(theoretical*rate)}点以上`).join('　') +
     `　E：${Math.ceil(theoretical*.15)-1}点以下`;
 
-  game=null;
+  game = null;
   showScreen('result-screen');
 }
 
@@ -726,7 +742,7 @@ function quitGame() {
   clearInterval(timerInterval);
   clearTimeout(questionTimeout);
 
-  game=null;
+  game = null;
 
   renderLevelCards();
   showScreen('home-screen');
