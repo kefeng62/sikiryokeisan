@@ -564,17 +564,17 @@ function submitAnswer() {
 
   game.answered = true;
 
-  const seconds=elapsedQuestionSeconds();
-  game.totalTime+=seconds;
+  const seconds = elapsedQuestionSeconds();
+  game.totalTime += seconds;
 
-  const x=game.level;
-  const y=game.questionMiss + game.carryMiss;
-  const z=seconds + game.carryTime;
+  const x = game.level;
+  const y = game.questionMiss + game.carryMiss;
+  const z = seconds + game.carryTime;
 
-  const raw=720*(x*x+x)-200(*x*x*y)-30(*x*x*z);
-  const points=Math.max(10*x,Math.round(raw));
+  const raw = 720 * (x * x + x) - 200 * x * y - 30 * x * z;
+  const points = Math.max(10 * x, Math.round(raw));
 
-  game.score+=points;
+  game.score += points;
   game.correct++;
 
   game.carryMiss=0;
