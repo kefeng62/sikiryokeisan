@@ -7,20 +7,42 @@
   <title>式量計算</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="effects.css">
+  <link rel="stylesheet" href="supabase-auth.css">
 </head>
 <body>
   <main class="app-shell">
     <section id="home-screen" class="screen home-screen">
       <h1>式量計算</h1>
+      <section class="online-panel" aria-labelledby="account-heading">
+        <h2 id="account-heading">オンラインランキング</h2>
+        <p id="auth-status" role="status">Supabaseの設定後、ログインできます。</p>
+        <form id="auth-form">
+          <label>表示名 <input id="auth-display-name" type="text" maxlength="24" autocomplete="nickname" placeholder="ランキングに表示する名前"></label>
+          <label>メールアドレス <input id="auth-email" type="email" autocomplete="email" required></label>
+          <label>パスワード <input id="auth-password" type="password" minlength="6" autocomplete="current-password" required></label>
+          <div class="auth-actions">
+            <button type="button" id="sign-up-button">新規登録</button>
+            <button type="submit" id="sign-in-button">ログイン</button>
+            <button type="button" id="sign-out-button" class="hidden">ログアウト</button>
+          </div>
+        </form>
+        <div class="leaderboard-controls">
+          <label for="leaderboard-level">ランキング</label>
+          <select id="leaderboard-level" aria-label="ランキングのレベル">
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+          </select>
+          <button type="button" id="refresh-leaderboard">更新</button>
+        </div>
+        <p id="leaderboard-status" role="status"></p>
+        <ol id="leaderboard-list" class="leaderboard-list"></ol>
+      </section>
       <div id="home-player-progress" class="home-player-progress" aria-live="polite"></div>
       <div id="level-cards" class="level-grid"></div>
       <button id="atomic-list-button" class="secondary home-atomic">原子量一覧</button>
     </section>
 
     <section id="game-screen" class="screen game-screen hidden" aria-live="polite">
-      <div class="game-particles" aria-hidden="true"></div>
-      <div class="correct-flash" aria-hidden="true"></div>
-      <div class="miss-flash" aria-hidden="true"></div>
       <header class="game-header">
         <div>
           <div class="level-heading" id="game-level">Level 1</div>
@@ -90,5 +112,8 @@
   <script src="particles.js"></script>
   <script src="sound-effects.js"></script>
   <script src="home-progress.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-auth.js"></script>
 </body>
 </html>
