@@ -571,7 +571,7 @@ function submitAnswer() {
   const y=game.questionMiss + game.carryMiss;
   const z=seconds + game.carryTime;
 
-  const raw=720*(x*x+x)-200*x*y-30*x*z;
+  const raw=720*(x*x+x)-200(*x*x*y)-30(*x*x*z);
   const points=Math.max(10*x,Math.round(raw));
 
   game.score+=points;
