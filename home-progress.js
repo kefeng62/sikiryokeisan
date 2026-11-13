@@ -19,12 +19,6 @@
     return `${minutes}:${remainder.toFixed(2).padStart(5, '0')}`;
   }
 
-  function parseTime(value) {
-    const match = value.trim().match(/^(\d+):(\d{2}\.\d{2})$/);
-    if (!match) return NaN;
-    return Number(match[1]) * 60 + Number(match[2]);
-  }
-
   function renderProgress() {
     const rank = Number(localStorage.getItem('formula-player-rank') || 1);
     const xp = Number(localStorage.getItem('formula-player-xp') || 0);
@@ -33,36 +27,16 @@
 
   function renderFastestTimes() {
     cards.querySelectorAll('.level-card').forEach(card => {
-      const levelClass = [...card.classList].find(name => /^level-\d+$/.test(name));
-      if (!levelClass) return;
-      const level = Number(levelClass.slice('level-'.length));
-      let label = card.querySelector('.fastest-time');
-      if (!label) {
-        label = document.createElement('small');
-        label.className = 'fastest-time';
-        card.appendChild(label);
-      }
-      let best = NaN;
-      try { best = Number(localStorage.getItem(`formula-game-fastest-${level}`)); } catch (_) {}
-      label.textContent = Number.isFinite(best) && best > 0
-        ? `最速タイム：${formatTime(best)}`
-        : '最速タイム：--:--.--';
+      const match = card.className.match(/level-(\d+)/);
+      if (!match) return;
+      const level = Number(match[1]);
+      const label = card.querySelector('.fastest-time');
+      if (!label) return;
+
+      let fastest = Number(localStorage.getItem(`formula-game-fastest-${level}`) || 0);
+      fastest = Number.isFinite(fastest) && fastest > 0 ? fastest : 0;
+      label.textContent = fastest > 0 ? `最速タイム：${formatTime(fastest)}` : '最速タイム：--:--.--';
     });
-  }
-
-  function recordFinishedTime() {
-    if (resultScreen.classList.contains('hidden')) return;
-    const levelMatch = document.getElementById('result-level').textContent.match(/\d+/);
-    const elapsed = parseTime(document.getElementById('result-time').textContent);
-    if (!levelMatch || !Number.isFinite(elapsed) || elapsed <= 0) return;
-
-    const key = `formula-game-fastest-${Number(levelMatch[0])}`;
-    let previous = NaN;
-    try { previous = Number(localStorage.getItem(key)); } catch (_) {}
-    if (!Number.isFinite(previous) || previous <= 0 || elapsed < previous) {
-      try { localStorage.setItem(key, String(elapsed)); } catch (_) {}
-      renderFastestTimes();
-    }
   }
 
   renderProgress();
@@ -73,7 +47,7 @@
     attributeFilter: ['class']
   });
   new MutationObserver(renderFastestTimes).observe(cards, { childList: true });
-  new MutationObserver(recordFinishedTime).observe(resultScreen, {
+  new MutationObserver(renderFastestTimes).observe(resultScreen, {
     attributes: true,
     attributeFilter: ['class']
   });
