@@ -2,11 +2,12 @@
 .game-screen {
   background-image:
     radial-gradient(circle, rgba(255,255,255,.82) 1px, transparent 1.8px),
-    radial-gradient(circle, rgba(83,135,174,.30) 1px, transparent 2px),
-    radial-gradient(circle, rgba(255,255,255,.55) 1.2px, transparent 2px),
+    radial-gradient(circle, rgba(83,135,174,.42) 2px, transparent 3px),
+    radial-gradient(circle, rgba(255,255,255,.68) 3px, transparent 4.2px),
     var(--panel);
-  background-size: 137px 151px, 211px 193px, 283px 247px, 100% 100%;
-  background-position: 0 0, 60px 30px, 120px 80px, 0 0;
+  /* 3 size layers at roughly 20x the previous particle density */
+  background-size: 35px 38px, 53px 48px, 71px 62px, 100% 100%;
+  background-position: 0 0, 17px 11px, 31px 24px, 0 0;
   animation: particle-drift 32s linear infinite;
 }
 
@@ -19,8 +20,8 @@
 }
 
 @keyframes particle-drift {
-  from { background-position: 0 0, 60px 30px, 120px 80px, 0 0; }
-  to { background-position: 137px 151px, -151px 223px, 403px -167px, 0 0; }
+  from { background-position: 0 0, 17px 11px, 31px 24px, 0 0; }
+  to { background-position: 35px 38px, -36px 59px, 102px -38px, 0 0; }
 }
 
 .miss-flash {
