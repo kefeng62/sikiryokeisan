@@ -1,27 +1,43 @@
 /* Play-screen ambience and miss feedback */
 .game-screen {
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,.82) 1px, transparent 1.8px),
-    radial-gradient(circle, rgba(83,135,174,.42) 2px, transparent 3px),
-    radial-gradient(circle, rgba(255,255,255,.68) 3px, transparent 4.2px),
-    var(--panel);
-  /* 3 size layers at roughly 20x the previous particle density */
-  background-size: 35px 38px, 53px 48px, 71px 62px, 100% 100%;
-  background-position: 0 0, 17px 11px, 31px 24px, 0 0;
-  animation: particle-drift 32s linear infinite;
+  position: relative;
+  overflow: hidden;
+  background: var(--panel);
 }
 
-/* Keep ambient particles moving while answer feedback animates. */
+.game-particles {
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  opacity: 0.95;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.96) 0 1.6px, transparent 2.4px),
+    radial-gradient(circle, rgba(76,130,190,.72) 0 2.2px, transparent 3.5px),
+    radial-gradient(circle, rgba(255,255,255,.8) 0 3.3px, transparent 4.8px),
+    radial-gradient(circle, rgba(145,185,220,.52) 0 1.1px, transparent 2.1px),
+    radial-gradient(circle, rgba(255,255,255,.92) 0 2.7px, transparent 4.1px);
+  background-size: 26px 26px, 42px 42px, 64px 64px, 19px 19px, 48px 48px;
+  background-position: 0 0, 10px 14px, 19px 25px, 6px 8px, 23px 32px;
+  animation: particle-drift 20s linear infinite;
+  z-index: 0;
+}
+
+.game-screen > *:not(.game-particles) {
+  position: relative;
+  z-index: 1;
+}
+
 .game-screen.effect-correct {
-  animation: particle-drift 32s linear infinite, correct-green-flash .32s ease-out;
+  animation: correct-green-flash .32s ease-out;
 }
 .game-screen.effect-wrong {
-  animation: particle-drift 32s linear infinite, wrong-electric-shake .32s ease-out;
+  animation: wrong-electric-shake .32s ease-out;
 }
 
 @keyframes particle-drift {
-  from { background-position: 0 0, 17px 11px, 31px 24px, 0 0; }
-  to { background-position: 35px 38px, -36px 59px, 102px -38px, 0 0; }
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(18px, 12px, 0) scale(1.06); }
+  100% { transform: translate3d(-20px, -14px, 0) scale(1); }
 }
 
 .miss-flash {
@@ -41,6 +57,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .game-particles,
   .game-screen,
   .game-screen.effect-correct,
   .game-screen.effect-wrong {
