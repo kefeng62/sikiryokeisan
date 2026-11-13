@@ -7,7 +7,7 @@
   <title>式量計算</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="effects.css">
-  <link rel="stylesheet" href="sound-settings.css?v=2">
+  <link rel="stylesheet" href="sound-settings.css?v=3">
 </head>
 <body>
   <main class="app-shell">
@@ -26,14 +26,8 @@
       <div class="correct-flash" aria-hidden="true"></div>
       <div class="miss-flash" aria-hidden="true"></div>
       <header class="game-header">
-        <div>
-          <div class="level-heading" id="game-level">Level 1</div>
-          <div class="question-number" id="question-number">問 1</div>
-        </div>
-        <div class="score-and-time">
-          <div>SCORE：<span id="current-score">0</span></div>
-          <time id="question-timer">0:00.00</time>
-        </div>
+        <div><div class="level-heading" id="game-level">Level 1</div><div class="question-number" id="question-number">問 1</div></div>
+        <div class="score-and-time"><div>SCORE：<span id="current-score">0</span></div><time id="question-timer">0:00.00</time></div>
       </header>
       <div class="question-area">
         <div class="compound" id="compound">H<sub>2</sub>O</div>
@@ -50,10 +44,7 @@
           <button class="zero" data-key="0">0</button><button class="decimal" data-key="dot">.</button>
           <button class="go-button" id="submit-answer" disabled>GO</button>
         </div>
-        <div class="pass-wrap">
-          <button id="pass-button" class="secondary pass-button hidden">パス</button>
-          <div id="pass-remaining" class="pass-remaining">後3回</div>
-        </div>
+        <div class="pass-wrap"><button id="pass-button" class="secondary pass-button hidden">パス</button><div id="pass-remaining" class="pass-remaining">後3回</div></div>
         <aside class="atomic-panel"><h2>原子量</h2><div id="atomic-list" class="atomic-list"></div></aside>
       </div>
     </section>
@@ -62,16 +53,13 @@
       <header class="result-header"><span id="result-level">Level 1</span><span>RESULT</span></header>
       <div class="result-content">
         <div class="result-stats">
-          <div><span>SCORE</span><strong id="result-score">0</strong></div>
-          <div><span>TIME</span><strong id="result-time">0:00.00</strong></div>
-          <div><span>MISS</span><strong id="result-miss">0</strong></div>
-          <div><span>正解数</span><strong id="result-correct">0 / 0</strong></div>
+          <div><span>SCORE</span><strong id="result-score">0</strong></div><div><span>TIME</span><strong id="result-time">0:00.00</strong></div>
+          <div><span>MISS</span><strong id="result-miss">0</strong></div><div><span>正解数</span><strong id="result-correct">0 / 0</strong></div>
           <div><span>パス回数</span><strong id="result-pass">0</strong></div>
         </div>
         <div class="rank" id="result-rank">S</div>
       </div>
-      <p class="rank-detail" id="rank-detail"></p>
-      <div class="player-progress" id="player-xp">PLAYER RANK 1　XP：0 / 1000</div>
+      <p class="rank-detail" id="rank-detail"></p><div class="player-progress" id="player-xp">PLAYER RANK 1　XP：0 / 1000</div>
       <div class="player-rankup hidden" id="player-rankup" aria-live="polite"></div>
       <div class="rank-border" id="rank-border">S：70%以上　A：55%以上　B：45%以上　C：30%以上　D：15%以上　E：それ以下</div>
       <button id="back-home-button" class="secondary result-back">もどる</button>
@@ -81,27 +69,33 @@
       <div class="modal-card sound-settings-card">
         <button id="close-sound-settings" class="modal-close" aria-label="閉じる">×</button>
         <h2 id="sound-settings-title">音量設定</h2>
-        <label class="volume-label" for="sound-volume">効果音の音量 <output id="sound-volume-value" for="sound-volume">70%</output></label>
-        <input id="sound-volume" type="range" min="0" max="100" value="70" aria-describedby="sound-volume-help">
-        <p id="sound-volume-help" class="volume-help">ボタンのタップ音と、正解・不正解の効果音に適用されます。</p>
-        <div class="sound-settings-actions">
-          <button id="sound-test-button" class="secondary" data-no-tap>音を試す</button>
-          <button id="sound-settings-done" class="secondary" data-no-tap>完了</button>
+        <p class="volume-help">音ごとに音量を調整できます。設定はこの端末に保存されます。</p>
+        <div class="sound-volume-row">
+          <label class="volume-label" for="sound-volume-tap">ボタンのタップ音 <output id="sound-volume-tap-value" for="sound-volume-tap">90%</output></label>
+          <input id="sound-volume-tap" type="range" min="0" max="100" value="90">
+          <button id="sound-test-tap" class="secondary sound-test-button" data-no-tap>試聴</button>
         </div>
+        <div class="sound-volume-row">
+          <label class="volume-label" for="sound-volume-correct">正解音 <output id="sound-volume-correct-value" for="sound-volume-correct">70%</output></label>
+          <input id="sound-volume-correct" type="range" min="0" max="100" value="70">
+          <button id="sound-test-correct" class="secondary sound-test-button" data-no-tap>試聴</button>
+        </div>
+        <div class="sound-volume-row">
+          <label class="volume-label" for="sound-volume-wrong">不正解音 <output id="sound-volume-wrong-value" for="sound-volume-wrong">70%</output></label>
+          <input id="sound-volume-wrong" type="range" min="0" max="100" value="70">
+          <button id="sound-test-wrong" class="secondary sound-test-button" data-no-tap>試聴</button>
+        </div>
+        <div class="sound-settings-actions"><button id="sound-settings-done" class="secondary" data-no-tap>完了</button></div>
       </div>
     </section>
 
     <section id="atomic-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="modal-card">
-        <button id="close-modal" class="modal-close" aria-label="閉じる">×</button>
-        <h2 id="modal-title">原子量一覧</h2>
-        <div id="all-atomic-list" class="all-atomic-list"></div>
-      </div>
+      <div class="modal-card"><button id="close-modal" class="modal-close" aria-label="閉じる">×</button><h2 id="modal-title">原子量一覧</h2><div id="all-atomic-list" class="all-atomic-list"></div></div>
     </section>
   </main>
   <script src="script.js"></script>
   <script src="particles.js"></script>
-  <script src="sound-effects.js?v=2"></script>
+  <script src="sound-effects.js?v=3"></script>
   <script src="home-progress.js"></script>
   <script src="decimal-key.js"></script>
 </body>
