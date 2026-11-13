@@ -5,6 +5,11 @@ const COMMON_ATOMIC_MASSES = {
   Cu: 63.5, Zn: 65, Br: 80, Sr: 88, Rb: 85.5, Ag: 108, I: 127
 };
 
+const SOUND_FILES = {
+  correct: 'https://raw.githubusercontent.com/kefeng62/sikiryokeisan/main/成功音.wav',
+  wrong: 'https://raw.githubusercontent.com/kefeng62/sikiryokeisan/main/失敗音.mp3'
+};
+
 const LEVEL2_ATOMIC_MASSES = {
   ...COMMON_ATOMIC_MASSES,
   V: 51, Cr: 52, Mn: 55, Cd: 112, Sn: 119, Ba: 137, Pb: 207
@@ -16,7 +21,7 @@ const LEVEL1_POOLS = {
     ['HCl','塩化水素'], ['H2O','水'], ['H2SO4','硫酸'],
     ['NaCl','塩化ナトリウム'], ['MgCl2','塩化マグネシウム'], ['KCl','塩化カリウム'],
     ['CaCl2','塩化カルシウム'], ['AlCl3','塩化アルミニウム'],
-    ['Na2O','酸化ナトリウム'], ['MgO','酸化マグネシウム'], ['CaO','酸化カルシウム'], ['Al2O3','酸化アルミニウム'],
+    ['Na2O','酸化ナトリウム'], ['MgO','酸化マグネシウム'], ['CaO','酸化カ��シウム'], ['Al2O3','酸化アルミニウム'],
     ['NaOH','水酸化ナトリウム'], ['KOH','水酸化カリウム'], ['Mg(OH)2','水酸化マグネシウム'],
     ['Ca(OH)2','水酸化カルシウム'], ['Al(OH)3','水酸化アルミニウム'],
     ['Na2CO3','炭酸ナトリウム'], ['K2CO3','炭酸カリウム'], ['MgCO3','炭酸マグネシウム'], ['CaCO3','炭酸カルシウム'],
@@ -335,7 +340,7 @@ function renderLevelCards() {
     const available = level === 1 || level === 2;
     card.disabled = !available;
 
-    card.innerHTML = `<strong>Level　${level}</strong><small>${available ? `High Score：${best}` : '準備中'}</small><span class="best">${available ? (best ? rankFor(best, theoreticalPerQuestion(level)*5) : '—') : '—'}</span>`;
+    card.innerHTML = `<strong>Level　${level}</strong><small>${available ? `High Score：${best}` : '準備中'}</small><span class="best">${available ? (best ? rankFor(best, theoreticalPerQuestion(level)) : '-') : '—'}</span>`;
 
     if (available) {
       card.addEventListener('click', () => startGame(level));
@@ -471,34 +476,44 @@ function playAnswerEffect(kind) {
 }
 
 function playSound(kind) {
+  const url = SOUND_FILES[kind];
+  if (!url) return;
+
   try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
+    const audio = new Audio(url);
+    audio.volume = 0.75;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+  } catch (_) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
 
-    const ctx = new AudioCtx();
-    const now = ctx.currentTime;
-    const notes = kind === 'correct' ? [660, 880] : [220, 150];
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      const notes = kind === 'correct' ? [660, 880] : [220, 150];
 
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
 
-      osc.type = kind === 'correct' ? 'sine' : 'sawtooth';
-      osc.frequency.setValueAtTime(freq, now + i * 0.09);
+        osc.type = kind === 'correct' ? 'sine' : 'sawtooth';
+        osc.frequency.setValueAtTime(freq, now + i * 0.09);
 
-      gain.gain.setValueAtTime(0.0001, now + i * 0.09);
-      gain.gain.exponentialRampToValueAtTime(0.12, now + i * 0.09 + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.09 + 0.13);
+        gain.gain.setValueAtTime(0.0001, now + i * 0.09);
+        gain.gain.exponentialRampToValueAtTime(0.12, now + i * 0.09 + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.09 + 0.13);
 
-      osc.connect(gain);
-      gain.connect(ctx.destination);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
 
-      osc.start(now + i * 0.09);
-      osc.stop(now + i * 0.09 + 0.14);
-    });
+        osc.start(now + i * 0.09);
+        osc.stop(now + i * 0.09 + 0.14);
+      });
 
-    setTimeout(() => ctx.close(), 450);
-  } catch (_) {}
+      setTimeout(() => ctx.close(), 450);
+    } catch (_) {}
+  }
 }
 
 function xpNeeded(rank) {
