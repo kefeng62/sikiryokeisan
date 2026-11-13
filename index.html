@@ -7,7 +7,7 @@
   <title>式量計算</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="effects.css">
-  <link rel="stylesheet" href="sound-settings.css">
+  <link rel="stylesheet" href="sound-settings.css?v=2">
 </head>
 <body>
   <main class="app-shell">
@@ -35,14 +35,12 @@
           <time id="question-timer">0:00.00</time>
         </div>
       </header>
-
       <div class="question-area">
         <div class="compound" id="compound">H<sub>2</sub>O</div>
         <div class="compound-name" id="compound-name">水</div>
         <div class="answer-display" id="answer-display" aria-label="入力した式量">　</div>
         <p class="feedback" id="feedback" role="status"></p>
       </div>
-
       <div class="game-bottom">
         <button id="quit-button" class="secondary quit-button">やめる</button>
         <div class="keypad" aria-label="数字入力">
@@ -56,10 +54,7 @@
           <button id="pass-button" class="secondary pass-button hidden">パス</button>
           <div id="pass-remaining" class="pass-remaining">後3回</div>
         </div>
-        <aside class="atomic-panel">
-          <h2>原子量</h2>
-          <div id="atomic-list" class="atomic-list"></div>
-        </aside>
+        <aside class="atomic-panel"><h2>原子量</h2><div id="atomic-list" class="atomic-list"></div></aside>
       </div>
     </section>
 
@@ -82,7 +77,7 @@
       <button id="back-home-button" class="secondary result-back">もどる</button>
     </section>
 
-    <section id="sound-settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="sound-settings-title">
+    <section id="sound-settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="sound-settings-title">
       <div class="modal-card sound-settings-card">
         <button id="close-sound-settings" class="modal-close" aria-label="閉じる">×</button>
         <h2 id="sound-settings-title">音量設定</h2>
@@ -106,7 +101,7 @@
   </main>
   <script src="script.js"></script>
   <script src="particles.js"></script>
-  <script src="sound-effects.js"></script>
+  <script src="sound-effects.js?v=2"></script>
   <script src="home-progress.js"></script>
   <script src="decimal-key.js"></script>
 </body>
