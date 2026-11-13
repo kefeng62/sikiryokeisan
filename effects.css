@@ -1,4 +1,4 @@
-/* Play-screen ambience and miss feedback */
+/* Play-screen ambience and answer feedback */
 .game-screen {
   position: relative;
   overflow: hidden;
@@ -30,20 +30,53 @@
   animation: wrong-electric-shake .32s ease-out;
 }
 
+.correct-flash,
 .miss-flash {
   position: absolute;
   inset: 0;
   z-index: 7;
   pointer-events: none;
   opacity: 0;
+}
+.correct-flash {
+  background: rgba(30, 190, 85, .42);
+}
+.game-screen.effect-correct .correct-flash {
+  animation: full-screen-green-flash .32s ease-out;
+}
+.miss-flash {
   background: rgba(235, 25, 35, .42);
 }
 .game-screen.effect-wrong .miss-flash {
   animation: full-screen-red-flash .32s ease-out;
 }
+@keyframes full-screen-green-flash {
+  0%, 100% { opacity: 0; }
+  25%, 55% { opacity: 1; }
+}
 @keyframes full-screen-red-flash {
   0%, 100% { opacity: 0; }
   25%, 55% { opacity: 1; }
+}
+
+.home-player-progress {
+  width: fit-content;
+  max-width: 100%;
+  margin: -38px 0 24px 18px;
+  padding: 10px 16px;
+  border: 1px solid rgba(75, 95, 120, .35);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .72);
+  color: #34445a;
+  font-weight: 800;
+  letter-spacing: .03em;
+}
+
+@media (max-width: 700px) {
+  .home-player-progress {
+    margin: -14px 0 20px;
+    font-size: .95rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -53,6 +86,7 @@
     animation-duration: .01ms;
     animation-iteration-count: 1;
   }
+  .game-screen.effect-correct .correct-flash,
   .game-screen.effect-wrong .miss-flash {
     animation-duration: .01ms;
   }

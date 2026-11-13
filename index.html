@@ -12,12 +12,14 @@
   <main class="app-shell">
     <section id="home-screen" class="screen home-screen">
       <h1>式量計算</h1>
+      <div id="home-player-progress" class="home-player-progress" aria-live="polite"></div>
       <div id="level-cards" class="level-grid"></div>
       <button id="atomic-list-button" class="secondary home-atomic">原子量一覧</button>
     </section>
 
     <section id="game-screen" class="screen game-screen hidden" aria-live="polite">
       <div class="game-particles" aria-hidden="true"></div>
+      <div class="correct-flash" aria-hidden="true"></div>
       <div class="miss-flash" aria-hidden="true"></div>
       <header class="game-header">
         <div>
@@ -87,5 +89,6 @@
   <script src="script.js"></script>
   <script src="particles.js"></script>
   <script src="sound-effects.js"></script>
+  <script src="home-progress.js"></script>
 </body>
 </html>
