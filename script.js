@@ -780,3 +780,18 @@ $('atomic-modal').addEventListener('click',e=>{
 });
 
 renderLevelCards();
+
+document.addEventListener('keydown', (event) => {
+  if (!game) return;
+
+  const isDecimalKey =
+    event.key === '.' ||
+    event.key === ',' ||
+    event.key === 'Decimal' ||
+    event.code === 'NumpadDecimal';
+
+  if (!isDecimalKey) return;
+
+  event.preventDefault();
+  handleKey('dot');
+});
