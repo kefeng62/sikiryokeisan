@@ -325,7 +325,8 @@ const GAME_DATA = {
 
 // 化学式から式量を計算する
 function parseFormula(formula) {
-  const tokens = formula.match(/[A-Z][a-z]?|\d+|\(|\)/g) || [];
+  formula = formula.replace(/\[/g, '(').replace(/\]/g, ')');
+const tokens = formula.match(/[A-Z][a-z]?|\d+|\(|\)/g) || [];
   let i = 0;
 
   function group() {
