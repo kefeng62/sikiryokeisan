@@ -409,7 +409,6 @@ function renderHomePlayerProgress() {
   target.textContent = `PLAYER RANK ${progress.rank}　次のランクまで ${progress.xp} / ${xpNeeded(progress.rank)} XP　累計 ${totalEarnedXP(progress)} XP`;
 }
 
-
 // 図鑑：一度でも問題画面に表示された化学種を端末内に保存する
 const ENCYCLOPEDIA_KEY = 'formula-game-encyclopedia-v1';
 
@@ -488,14 +487,10 @@ function encyclopediaStyles() {
 function setupEncyclopedia() {
   encyclopediaStyles();
 
-  const homeActions = document.querySelector('.home-actions');
-  if (homeActions && !$('encyclopedia-button')) {
-    const button = document.createElement('button');
-    button.id = 'encyclopedia-button';
-    button.className = 'secondary home-encyclopedia encyclopedia-button';
-    button.textContent = '図鑑';
+  const button = $('encyclopedia-button');
+  if (button && !button.dataset.encyclopediaBound) {
     button.addEventListener('click', openEncyclopedia);
-    homeActions.insertBefore(button, $('atomic-list-button'));
+    button.dataset.encyclopediaBound = 'true';
   }
 
   if (!$('encyclopedia-modal')) {
@@ -580,6 +575,7 @@ function renderEncyclopedia(levelFilter = 'all') {
     $('encyclopedia-list').appendChild(card);
   });
 }
+
 
 function renderLevelCards() {
   $('level-cards').innerHTML = '';
@@ -1000,7 +996,8 @@ function quitGame() {
 
   game = null;
 
-  renderLevelCards();
+  setupEncyclopedia();
+renderLevelCards();
   showScreen('home-screen');
 }
 
@@ -1049,7 +1046,6 @@ $('atomic-modal').addEventListener('click',e=>{
   }
 });
 
-setupEncyclopedia();
 renderLevelCards();
 
 document.addEventListener('keydown', (event) => {
