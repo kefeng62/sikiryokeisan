@@ -409,6 +409,178 @@ function renderHomePlayerProgress() {
   target.textContent = `PLAYER RANK ${progress.rank}　次のランクまで ${progress.xp} / ${xpNeeded(progress.rank)} XP　累計 ${totalEarnedXP(progress)} XP`;
 }
 
+
+// 図鑑：一度でも問題画面に表示された化学種を端末内に保存する
+const ENCYCLOPEDIA_KEY = 'formula-game-encyclopedia-v1';
+
+function allSpeciesEntries() {
+  const entries = [];
+  [LEVEL1_POOLS, LEVEL2_POOLS, LEVEL3_POOLS].forEach((pools, index) => {
+    ['A','B','C'].forEach(category => {
+      (pools[category] || []).forEach(entry => {
+        const [formula, name] = entry;
+        if (!entries.some(item => item.level === index + 1 && item.formula === formula && item.name === name)) {
+          entries.push({ level: index + 1, category, formula, name });
+        }
+      });
+    });
+  });
+  return entries;
+}
+
+const ENCYCLOPEDIA_ENTRIES = allSpeciesEntries();
+
+function getEncounteredSpecies() {
+  try {
+    const value = JSON.parse(localStorage.getItem(ENCYCLOPEDIA_KEY) || '[]');
+    return new Set(Array.isArray(value) ? value : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function speciesKey(level, item) {
+  return `${level}|${item.formula}|${item.name}`;
+}
+
+function markSpeciesEncountered(level, item) {
+  const seen = getEncounteredSpecies();
+  seen.add(speciesKey(level, item));
+  try {
+    localStorage.setItem(ENCYCLOPEDIA_KEY, JSON.stringify([...seen]));
+  } catch (error) {
+    console.warn('図鑑の保存に失敗しました', error);
+  }
+}
+
+function formulaMarkup(formula) {
+  return String(formula)
+    .replace(/([A-Z][a-z]?)(\d+)/g, '$1<sub>$2</sub>')
+    .replace(/\)(\d+)/g, ')<sub>$1</sub>');
+}
+
+function encyclopediaStyles() {
+  if (document.getElementById('encyclopedia-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'encyclopedia-styles';
+  style.textContent = `
+    .encyclopedia-button { margin-left: 8px; }
+    .encyclopedia-modal { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.62); display:flex; align-items:center; justify-content:center; padding:16px; }
+    .encyclopedia-modal.hidden { display:none; }
+    .encyclopedia-card { background: var(--panel, #fff); color: var(--text, #222); width:min(900px, 100%); max-height: min(88vh, 850px); overflow:auto; border-radius:18px; padding:20px; box-shadow:0 12px 50px rgba(0,0,0,.3); }
+    .encyclopedia-head { display:flex; justify-content:space-between; align-items:center; gap:12px; position:sticky; top:-20px; background:inherit; padding:4px 0 12px; z-index:1; }
+    .encyclopedia-head h2 { margin:0; }
+    .encyclopedia-close { font-size:1.4rem; min-width:42px; min-height:42px; }
+    .encyclopedia-count { opacity:.75; margin:4px 0 14px; }
+    .encyclopedia-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+    .encyclopedia-tabs button.active { outline:2px solid currentColor; font-weight:700; }
+    .encyclopedia-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr)); gap:10px; }
+    .encyclopedia-entry { border:1px solid rgba(128,128,128,.35); border-radius:12px; padding:12px; min-width:0; }
+    .encyclopedia-entry.unknown { opacity:.72; }
+    .encyclopedia-entry strong { display:block; margin-bottom:7px; }
+    .encyclopedia-entry .formula { font-size:1.15rem; overflow-wrap:anywhere; margin:5px 0; }
+    .encyclopedia-entry small { display:block; opacity:.78; line-height:1.5; }
+    .encyclopedia-entry .unknown-mark { font-size:1.3rem; font-weight:700; }
+  `;
+  document.head.appendChild(style);
+}
+
+function setupEncyclopedia() {
+  encyclopediaStyles();
+
+  const homeActions = document.querySelector('.home-actions');
+  if (homeActions && !$('encyclopedia-button')) {
+    const button = document.createElement('button');
+    button.id = 'encyclopedia-button';
+    button.className = 'secondary home-encyclopedia encyclopedia-button';
+    button.textContent = '図鑑';
+    button.addEventListener('click', openEncyclopedia);
+    homeActions.insertBefore(button, $('atomic-list-button'));
+  }
+
+  if (!$('encyclopedia-modal')) {
+    const modal = document.createElement('section');
+    modal.id = 'encyclopedia-modal';
+    modal.className = 'encyclopedia-modal hidden';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'encyclopedia-title');
+    modal.innerHTML = `
+      <div class="encyclopedia-card">
+        <div class="encyclopedia-head">
+          <h2 id="encyclopedia-title">化学種図鑑</h2>
+          <button type="button" class="secondary encyclopedia-close" id="encyclopedia-close" aria-label="閉じる">×</button>
+        </div>
+        <p class="encyclopedia-count" id="encyclopedia-count"></p>
+        <div class="encyclopedia-tabs" id="encyclopedia-tabs">
+          <button type="button" class="secondary active" data-level="all">すべて</button>
+          <button type="button" class="secondary" data-level="1">Level 1</button>
+          <button type="button" class="secondary" data-level="2">Level 2</button>
+          <button type="button" class="secondary" data-level="3">Level 3</button>
+        </div>
+        <div class="encyclopedia-list" id="encyclopedia-list"></div>
+      </div>`;
+    document.body.appendChild(modal);
+
+    $('encyclopedia-close').addEventListener('click', closeEncyclopedia);
+    modal.addEventListener('click', event => {
+      if (event.target === modal) closeEncyclopedia();
+    });
+    $('encyclopedia-tabs').addEventListener('click', event => {
+      const button = event.target.closest('[data-level]');
+      if (!button) return;
+      $('encyclopedia-tabs').querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
+      renderEncyclopedia(button.dataset.level);
+    });
+  }
+}
+
+function openEncyclopedia() {
+  renderEncyclopedia('all');
+  $('encyclopedia-modal').classList.remove('hidden');
+}
+
+function closeEncyclopedia() {
+  $('encyclopedia-modal').classList.add('hidden');
+}
+
+function renderEncyclopedia(levelFilter = 'all') {
+  const seen = getEncounteredSpecies();
+  const entries = ENCYCLOPEDIA_ENTRIES.filter(item =>
+    levelFilter === 'all' || String(item.level) === String(levelFilter)
+  );
+
+  $('encyclopedia-count').textContent =
+    `発見済み ${entries.filter(item => seen.has(speciesKey(item.level, item))).length} / ${entries.length} 種`;
+
+  $('encyclopedia-list').innerHTML = '';
+  entries.forEach(item => {
+    const discovered = seen.has(speciesKey(item.level, item));
+    const card = document.createElement('article');
+    card.className = `encyclopedia-entry${discovered ? '' : ' unknown'}`;
+
+    if (!discovered) {
+      card.innerHTML = `
+        <strong>Level ${item.level}　？？？</strong>
+        <div class="unknown-mark">？</div>
+        <small>未発見</small>`;
+    } else {
+      let gameMass = '計算不可';
+      try {
+        gameMass = String(parseFormula(item.formula));
+      } catch (error) {
+        console.warn('図鑑の式量計算に失敗:', item.formula, error);
+      }
+      card.innerHTML = `
+        <strong>Level ${item.level}　${item.name}</strong>
+        <div class="formula">${formulaMarkup(item.formula)}</div>
+        <small>式量（ゲーム内計算）：${gameMass}</small>
+        <small>実際の分子式・組成式：${formulaMarkup(item.formula)}</small>`;
+    }
+    $('encyclopedia-list').appendChild(card);
+  });
+}
+
 function renderLevelCards() {
   $('level-cards').innerHTML = '';
   renderHomePlayerProgress();
@@ -480,6 +652,7 @@ function updatePassRemaining() {
 
 function loadQuestion() {
   const q = game.questions[game.index];
+  markSpeciesEncountered(game.level, q);
 
   inputValue = '';
   game.questionMiss = 0;
@@ -876,6 +1049,7 @@ $('atomic-modal').addEventListener('click',e=>{
   }
 });
 
+setupEncyclopedia();
 renderLevelCards();
 
 document.addEventListener('keydown', (event) => {
