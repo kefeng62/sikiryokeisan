@@ -3,8 +3,8 @@ const COMMON_ATOMIC_MASSES = {
   H: 1, Be: 9, C: 12, N: 14, O: 16, F: 19, Na: 23, Mg: 24, Al: 27,
   Si: 28, P: 31, S: 32, Cl: 35.5, K: 39, Ca: 40, Ti: 48, V: 51,
   Cr: 52, Mn: 55, Fe: 56, Co: 59, Ni: 59, Cu: 63.5, Zn: 65,
-  As: 75, Se: 79, Sr: 88, Rb: 85.5, Rh: 103, Ag: 108, I: 127, Xe: 131, Cs: 133 ,Ba: 137,
-  W: 184, Pt: 195,
+  As: 75, Se: 79, Sr: 88, Rb: 85.5, Zr: 91, Rh: 103, Ag: 108, I: 127, Xe: 131, Cs: 133 ,Ba: 137,
+  W: 184, Re: 186,Pt: 195,
 };
 
 const SOUND_FILES = {
