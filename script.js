@@ -1045,6 +1045,8 @@ $('atomic-modal').addEventListener('click',e=>{
     $('atomic-modal').classList.add('hidden');
   }
 });
+// 初回表示時にも図鑑ボタンのイベントを設定する
+setupEncyclopedia();
 
 renderLevelCards();
 
