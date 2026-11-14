@@ -153,7 +153,7 @@ const LEVEL2_POOLS = {
   A: [
     ...makeSaltPool(LEVEL2_CATIONS_A, LEVEL2_ANIONS_A),
     ['C5H12','ペンタン'], ['C6H14','ヘキサン'],
-    ['C7H12','ヘプタン'], ['C6H6','ベンゼン']
+    ['C7H16','ヘプタン'], ['C6H6','ベンゼン']
   ],
 
   B: [
