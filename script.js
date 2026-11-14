@@ -1,8 +1,10 @@
 /* 式量計算ゲーム：問題候補はカテゴリ別に登録し、各プレイで重複なしに抽選する */
 const COMMON_ATOMIC_MASSES = {
-  H: 1, C: 12, N: 14, O: 16, F: 19, Na: 23, Mg: 24, Al: 27,
-  P: 31, S: 32, Cl: 35.5, K: 39, Ca: 40, Fe: 56, Ni: 59,
-  Cu: 63.5, Zn: 65, Br: 80, Sr: 88, Rb: 85.5, Ag: 108, I: 127
+  H: 1, Be: 9, C: 12, N: 14, O: 16, F: 19, Na: 23, Mg: 24, Al: 27,
+  Si: 28, P: 31, S: 32, Cl: 35.5, K: 39, Ca: 40, Ti: 48, V: 51,
+  Cr: 52, Mn: 55, Fe: 56, Co: 59, Ni: 59, Cu: 63.5, Zn: 65,
+  As: 75, Se: 79, Sr: 88, Rb: 85.5, Ag: 108, I: 127, Ba: 137,
+  W: 184, Rh: 103, Xe: 131, Pt: 195, Cs: 133
 };
 
 const SOUND_FILES = {
@@ -176,10 +178,75 @@ const LEVEL2_POOLS = {
   ]
 };
 
+// Level 3：A・Bの区別をなくし、Aプールから4問、Cプールから1問を出題
+// 塩類は、組成式が明確で実在が確認されている代表例に限定
+const LEVEL3_POOLS = {
+  A: [
+    ['Ni(CO)4','テトラカルボニルニッケル'],
+    ['Fe(CO)5','ペンタカルボニル鉄'],
+    ['V(CO)6','ヘキサカルボニルバナジウム'],
+    ['Cr(CO)6','ヘキサカルボニルクロム'],
+    ['Rb2O2','過酸化ルビジウム'],
+    ['Cs2O2','過酸化セシウム'],
+    ['MgAl2O4','スピネル'],
+    ['C12H25NaO4S','ラウリル硫酸ナトリウム'],
+
+    // セレン酸塩
+    ['Na2SeO4','セレン酸ナトリウム'], ['K2SeO4','セレン酸カリウム'],
+    ['MgSeO4','セレン酸マグネシウム'], ['CaSeO4','セレン酸カルシウム'],
+    ['SrSeO4','セレン酸ストロンチウム'], ['BaSeO4','セレン酸バリウム'],
+    ['Ag2SeO4','セレン酸銀'], ['(NH4)2SeO4','セレン酸アンモニウム'],
+    ['Al2(SeO4)3','セレン酸アルミニウム'], ['FeSeO4','セレン酸鉄(II)'],
+    ['NiSeO4','セレン酸ニッケル(II)'], ['ZnSeO4','セレン酸亜鉛'],
+    ['CuSeO4','セレン酸銅(II)'],
+
+    // ケイ酸塩（代表的な組成式が定まるもの）
+    ['Na2SiO3','メタケイ酸ナトリウム'], ['K2SiO3','メタケイ酸カリウム'],
+    ['Na4SiO4','オルトケイ酸ナトリウム'], ['Mg2SiO4','オルトケイ酸マグネシウム'],
+    ['CaSiO3','メタケイ酸カルシウム'], ['Ca2SiO4','オルトケイ酸カルシウム'],
+
+    // タングステン酸塩
+    ['Na2WO4','タングステン酸ナトリウム'], ['K2WO4','タングステン酸カリウム'],
+    ['CaWO4','タングステン酸カルシウム'], ['SrWO4','タングステン酸ストロンチウム'],
+    ['BaWO4','タングステン酸バリウム'], ['Ag2WO4','タングステン酸銀'],
+    ['ZnWO4','タングステン酸亜鉛'], ['NiWO4','タングステン酸ニッケル(II)'],
+    ['CuWO4','タングステン酸銅(II)'], ['FeWO4','タングステン酸鉄(II)'],
+    ['MnWO4','タングステン酸マンガン(II)'], ['MgWO4','タングステン酸マグネシウム'],
+
+    // チタン酸塩
+    ['Na2TiO3','チタン酸ナトリウム'], ['MgTiO3','チタン酸マグネシウム'],
+    ['CaTiO3','チタン酸カルシウム'], ['SrTiO3','チタン酸ストロンチウム'],
+    ['BaTiO3','チタン酸バリウム'], ['FeTiO3','チタン酸鉄(II)'],
+    ['ZnTiO3','チタン酸亜鉛'], ['NiTiO3','チタン酸ニッケル(II)'],
+    ['MnTiO3','チタン酸マンガン(II)']
+  ],
+  B: [],
+  C: [
+    ['XeRhF6','ヘキサフルオロロジウム酸キセノン'],
+    ['XePtF6','ヘキサフルオロ白金酸キセノン'],
+    ['O2PtF6','ヘキサフルオロ白金酸ジオキシゲニル'],
+    ['BaTiSi3O9','ベニトアイト（ベニト石）'],
+    ['Be3Al2Si6O18','緑柱石'],
+    ['Ca2Al2MnSi3O12(OH)','ピーモンタイト（紅簾石）'],
+    ['Ca2Al2FeSi3O12(OH)','エピドート（緑簾石）'],
+
+    // 柘榴石系：代表的な端成分組成
+    ['Mg3Al2Si3O12','パイロープ（苦礬柘榴石）'],
+    ['Fe3Al2Si3O12','アルマンディン（鉄礬柘榴石）'],
+    ['Mn3Al2Si3O12','スペサルティン（満礬柘榴石）'],
+    ['Ca3Al2Si3O12','グロッシュラー（灰礬柘榴石）'],
+    ['Ca3Fe2Si3O12','アンドラダイト（灰鉄柘榴石）'],
+    ['Ca3Cr2Si3O12','ウバロバイト（灰クロム柘榴石）'],
+
+    // ベスビアナイト：文献で用いられる代表的な簡略組成式
+    ['Ca10Mg2Al4(SiO4)5(Si2O7)2(OH)4','ベスビアナイト（ベスブ石）']
+  ]
+};
+
 const GAME_DATA = {
   1: { atomicMasses: COMMON_ATOMIC_MASSES, categoryCounts: { A: 2, B: 2, C: 1 } },
   2: { atomicMasses: LEVEL2_ATOMIC_MASSES, categoryCounts: { A: 2, B: 2, C: 1 } },
-  3: { atomicMasses: {}, questions: [] },
+  3: { atomicMasses: LEVEL2_ATOMIC_MASSES, categoryCounts: { A: 4, B: 0, C: 1 } },
   4: { atomicMasses: {}, questions: [] }
 };
 
@@ -255,7 +322,10 @@ function questionFromEntry(entry, category) {
 }
 
 function poolForLevel(level) {
-  return level === 1 ? LEVEL1_POOLS : LEVEL2_POOLS;
+  if (level === 1) return LEVEL1_POOLS;
+  if (level === 2) return LEVEL2_POOLS;
+  if (level === 3) return LEVEL3_POOLS;
+  return {};
 }
 
 function makeLevelQuestions(level) {
@@ -313,7 +383,7 @@ function theoreticalTotal(level) {
 }
 
 function gameQuestionCount(level) {
-  return level === 1 || level === 2 ? 5 : (GAME_DATA[level].questions || []).length;
+  return level >= 1 && level <= 3 ? 5 : (GAME_DATA[level].questions || []).length;
 }
 
 function rankFor(score,theoretical) {
@@ -328,8 +398,22 @@ function rankFor(score,theoretical) {
   return 'E';
 }
 
+function totalEarnedXP(progress = getPlayerProgress()) {
+  let total = progress.xp;
+  for (let rank = 1; rank < progress.rank; rank++) total += xpNeeded(rank);
+  return total;
+}
+
+function renderHomePlayerProgress() {
+  const target = $('home-player-progress');
+  if (!target) return;
+  const progress = getPlayerProgress();
+  target.textContent = `PLAYER RANK ${progress.rank}　次のランクまで ${progress.xp} / ${xpNeeded(progress.rank)} XP　累計 ${totalEarnedXP(progress)} XP`;
+}
+
 function renderLevelCards() {
   $('level-cards').innerHTML = '';
+  renderHomePlayerProgress();
 
   for (let level = 1; level <= 4; level++) {
     const best = Number(localStorage.getItem(`formula-game-best-${level}`) || 0);
@@ -337,7 +421,7 @@ function renderLevelCards() {
     const card = document.createElement('button');
 
     card.className = `level-card level-${level}`;
-    const available = level === 1 || level === 2;
+    const available = level >= 1 && level <= 3;
     card.disabled = !available;
 
     const fastestText = available && fastest > 0
@@ -703,6 +787,7 @@ function finishGame() {
 
   localStorage.setItem('formula-player-rank', String(progress.rank));
   localStorage.setItem('formula-player-xp', String(progress.xp));
+  renderHomePlayerProgress();
 
   $('player-xp').textContent =
     `PLAYER RANK ${progress.rank}　XP：${progress.xp} / ${xpNeeded(progress.rank)}（今回 +${gained} XP）`;
