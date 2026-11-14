@@ -3,8 +3,8 @@ const COMMON_ATOMIC_MASSES = {
   H: 1, Be: 9, C: 12, N: 14, O: 16, F: 19, Na: 23, Mg: 24, Al: 27,
   Si: 28, P: 31, S: 32, Cl: 35.5, K: 39, Ca: 40, Ti: 48, V: 51,
   Cr: 52, Mn: 55, Fe: 56, Co: 59, Ni: 59, Cu: 63.5, Zn: 65,
-  As: 75, Se: 79, Sr: 88, Rb: 85.5, Ag: 108, I: 127, Ba: 137,
-  W: 184, Rh: 103, Xe: 131, Pt: 195, Cs: 133
+  As: 75, Se: 79, Sr: 88, Rb: 85.5, Rh: 103, Ag: 108, I: 127, Xe: 131, Cs: 133 ,Ba: 137,
+  W: 184, Pt: 195,
 };
 
 const SOUND_FILES = {
@@ -238,8 +238,6 @@ const LEVEL3_POOLS = {
     ['Ca3Fe2Si3O12','アンドラダイト（灰鉄柘榴石）'],
     ['Ca3Cr2Si3O12','ウバロバイト（灰クロム柘榴石）'],
 
-    // ベスビアナイト：文献で用いられる代表的な簡略組成式
-    ['Ca10Mg2Al4(SiO4)5(Si2O7)2(OH)4','ベスビアナイト（ベスブ石）']
   ]
 };
 
